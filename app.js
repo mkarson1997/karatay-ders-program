@@ -340,7 +340,7 @@ async function init(){
         return;
       }
       showWarnings(msgs);
-      // ===== إرسال سجل استخدام إلى Google Form =====
+         // ===== Usage log to Google Form =====
 const name = el("studentName").value?.trim() || "İsim girilmedi";
 
 let modeText = "Bilinmiyor";
@@ -349,17 +349,24 @@ if (mode === "y1") modeText = "1. Sınıf";
 if (mode === "y2") modeText = "2. Sınıf";
 if (mode === "mix") modeText = "1+2 (Karışık)";
 
-fetch("https://docs.google.com/forms/d/e/1tID-TvJhubKJMz-8SkgUhADqOZ6yKeldWSLLDrHmCY/formResponse", {
-  method: "POST",
-  mode: "no-cors",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: new URLSearchParams({
-    "entry.1401981382": name,
-    "entry.1538779879": modeText
-  })
-});
+try {
+  await fetch("https://docs.google.com/forms/d/e/1tID-TvJhubKJMz-8SkgUhADqOZ6yKeldWSLLDrHmCY/formResponse", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      "entry.1401981382": name,
+      "entry.1538779879": modeText
+    })
+  });
+
+  // give the browser a tiny moment
+  await new Promise(r => setTimeout(r, 150));
+} catch (err) {
+  console.log("Form log failed:", err);
+}
+
+alert("Log sent (attempt). Check Google Sheet.");
 
       await generatePdf(sessions);
     } catch (e){
