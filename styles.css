@@ -44,7 +44,6 @@ tbody tr:nth-child(odd){background:#F7FBFC;}
 tbody tr:nth-child(even){background:#E8F1F2;}
 .foot{font-size:12px; color:var(--muted); padding: 8px 2px;}
 
-/* Mobile: hide only "Kaynak" column */
 @media (max-width: 600px) {
   #preview th:nth-child(6),
   #preview td:nth-child(6) {
@@ -52,66 +51,60 @@ tbody tr:nth-child(even){background:#E8F1F2;}
   }
 }
 
-/* Mobile: make preview table scroll horizontally */
 #preview {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 #preview table {
-  min-width: 760px; /* خلي الجدول عريض وثابت */
+  min-width: 760px; 
 }
 
-/* ===============================
-   Mobile table optimization
-   =============================== */
+
 @media (max-width: 600px) {
 
-  /* خلي الجدول ياخد العرض بدون ما يكبر */
   #preview {
     overflow-x: auto;
   }
 
   #preview table {
     width: 100%;
-    table-layout: fixed; /* أهم سطر */
+    table-layout: fixed; 
     border-collapse: collapse;
     font-size: 12px;
   }
 
-  /* تحكم بعرض الأعمدة */
+  
   #preview th:nth-child(1),
   #preview td:nth-child(1) {
-    width: 18%; /* Gün */
+    width: 18%; 
   }
 
   #preview th:nth-child(2),
   #preview td:nth-child(2) {
-    width: 34%; /* Ders */
+    width: 34%; 
   }
 
   #preview th:nth-child(3),
   #preview td:nth-child(3) {
-    width: 18%; /* Saat */
+    width: 18%; 
   }
 
   #preview th:nth-child(4),
   #preview td:nth-child(4) {
-    width: 15%; /* Sınıf */
+    width: 15%; 
   }
 
   #preview th:nth-child(5),
   #preview td:nth-child(5) {
-    width: 15%; /* Hoca */
+    width: 15%; 
   }
 
-  /* إخفاء Kaynak على الموبايل */
   #preview th:nth-child(6),
   #preview td:nth-child(6) {
     display: none;
   }
 
-  /* كسر النص الطويل بدل ما يوسع الجدول */
   #preview td,
   #preview th {
     word-wrap: break-word;
@@ -121,7 +114,6 @@ tbody tr:nth-child(even){background:#E8F1F2;}
     vertical-align: middle;
   }
 
-  /* خلي اسم الدرس أوضح */
   #preview td:nth-child(2) {
     font-weight: 600;
   }
