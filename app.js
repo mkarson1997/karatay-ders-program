@@ -150,6 +150,7 @@ function tryAutoResolve(){
       for (const item of candidates){
         const cdef = getCourseDef(item.programId, item.courseKey);
         if (!cdef) continue;
+
         const groups = [...new Set(cdef.sessions.map(s => s.group))].filter(g => g !== 0).sort((a,b)=>a-b);
         if (groups.length < 2) continue;
 
@@ -161,6 +162,7 @@ function tryAutoResolve(){
         const alt = groups.find(g => g !== current);
         if (!alt) continue;
 
+        // try switch
         sel.value = String(alt);
         const testSessions = selectedSessions();
         const testConf = detectConflicts(testSessions);
@@ -172,6 +174,7 @@ function tryAutoResolve(){
           changedThisPass = true;
           break;
         } else {
+          // revert
           sel.value = String(current);
         }
       }
@@ -216,6 +219,33 @@ function notesForDay(day, sessions){
   return "Orta yoğunluk. Araları verimli kullan.";
 }
 
+// ===== PDF helpers: wrap long course names =====
+function wrapText(font, text, fontSize, maxWidth) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+
+  for (const w of words) {
+    const test = line ? `${line} ${w}` : w;
+    const width = font.widthOfTextAtSize(test, fontSize);
+    if (width <= maxWidth) {
+      line = test;
+    } else {
+      if (line) lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+function ellipsize(font, text, fontSize, maxWidth) {
+  let t = String(text);
+  while (t.length > 0 && font.widthOfTextAtSize(t + "…", fontSize) > maxWidth) {
+    t = t.slice(0, -1);
+  }
+  return t.length ? (t + "…") : "";
+}
+
 async function generatePdf(sessions){
   const { PDFDocument, rgb } = PDFLib;
 
@@ -225,7 +255,7 @@ async function generatePdf(sessions){
   pdfDoc.registerFontkit(fontkit);
   const font = await pdfDoc.embedFont(fontBytes, { subset: true });
 
-  const page = pdfDoc.addPage([595.28, 841.89]);
+  const page = pdfDoc.addPage([595.28, 841.89]); // A4 portrait
   const { width, height } = page.getSize();
 
   const mode = getMode();
@@ -240,18 +270,22 @@ async function generatePdf(sessions){
   }
 
   let y = height - 130;
-  const rowH = 22;
   const x0 = 40;
   const tableW = width - 80;
+
+  // columns: Gün | Ders | Saat | Sınıf
   const colX = [x0, x0+110, x0+340, x0+455];
 
-  page.drawRectangle({ x: x0, y, width: tableW, height: rowH, color: rgb(0.04,0.22,0.33) });
-  page.drawText("Gün", { x: colX[0]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
+  // header row height
+  const headerH = 22;
+  page.drawRectangle({ x: x0, y, width: tableW, height: headerH, color: rgb(0.04,0.22,0.33) });
+  page.drawText("Gün",  { x: colX[0]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
   page.drawText("Ders", { x: colX[1]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
   page.drawText("Saat", { x: colX[2]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
-  page.drawText("Sınıf", { x: colX[3]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
-  y -= rowH;
+  page.drawText("Sınıf",{ x: colX[3]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
+  y -= headerH;
 
+  // build rows
   const rows = [];
   for (const day of DAYS_ORDER){
     const dayItems = sessions.filter(s => s.day===day);
@@ -261,15 +295,43 @@ async function generatePdf(sessions){
   if (!rows.length) rows.push(["-", "Hiç ders seçilmedi", "-", "-"]);
 
   rows.forEach((r, idx) => {
+    // widths for wrapping
+    const courseW = (colX[2] - colX[1]) - 12;
+
+    // wrap course, max 2 lines
+    const courseFontSize = 10;
+    let lines = wrapText(font, r[1], courseFontSize, courseW);
+    if (lines.length > 2) {
+      lines = [lines[0], ellipsize(font, lines.slice(1).join(" "), courseFontSize, courseW)];
+    }
+
+    // dynamic row height
+    const rowH = (lines.length === 1) ? 22 : 34;
+
     const bg = idx%2===0 ? rgb(0.97,0.99,1) : rgb(0.92,0.96,0.99);
     page.drawRectangle({ x: x0, y, width: tableW, height: rowH, color: bg });
-    page.drawText(r[0], { x: colX[0]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
-    page.drawText(r[1], { x: colX[1]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
-    page.drawText(r[2], { x: colX[2]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
-    page.drawText(r[3], { x: colX[3]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
+
+    // baseline from top
+    const topTextY = y + rowH - 16;
+
+    // Gün
+    page.drawText(r[0], { x: colX[0]+6, y: topTextY, size: 10, font, color: rgb(0,0,0) });
+
+    // Ders (wrapped)
+    lines.forEach((ln, i) => {
+      page.drawText(ln, { x: colX[1]+6, y: topTextY - (i*12), size: courseFontSize, font, color: rgb(0,0,0) });
+    });
+
+    // Saat
+    page.drawText(r[2], { x: colX[2]+6, y: topTextY, size: 10, font, color: rgb(0,0,0) });
+
+    // Sınıf
+    page.drawText(r[3], { x: colX[3]+6, y: topTextY, size: 10, font, color: rgb(0,0,0) });
+
     y -= rowH;
   });
 
+  // Notes
   y -= 10;
   page.drawText("Notlar:", { x: 40, y, size: 12, font, color: rgb(0.04,0.22,0.33) });
   y -= 18;
@@ -340,27 +402,26 @@ async function init(){
         return;
       }
       showWarnings(msgs);
-         // ===== Usage log (Google Form) =====
-const name = el("studentName").value?.trim() || "İsim girilmedi";
 
-let modeText = "Bilinmiyor";
-const mode = getMode();
-if (mode === "y1") modeText = "1. Sınıf";
-if (mode === "y2") modeText = "2. Sınıf";
-if (mode === "mix") modeText = "1+2 (Karışık)";
+      // ===== Usage log (Google Form) via sendBeacon =====
+      const name = el("studentName").value?.trim() || "İsim girilmedi";
 
-const url = "https://docs.google.com/forms/d/e/1FAIpQLSczOEqI2XQU5HnlF4AOeH9ZcMyzlJ3NugWpuG0Pr5A8FXRVDQ/formResponse";
+      let modeText = "Bilinmiyor";
+      const mode = getMode();
+      if (mode === "y1") modeText = "1. Sınıf";
+      if (mode === "y2") modeText = "2. Sınıf";
+      if (mode === "mix") modeText = "1+2 (Karışık)";
 
-const payload = new URLSearchParams({
-  "entry.1401981382": name,
-  "entry.1538779879": modeText
-}).toString();
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSczOEqI2XQU5HnlF4AOeH9ZcMyzlJ3NugWpuG0Pr5A8FXRVDQ/formResponse";
+      const payload = new URLSearchParams({
+        "entry.1401981382": name,
+        "entry.1538779879": modeText
+      }).toString();
 
-navigator.sendBeacon(
-  url,
-  new Blob([payload], { type: "application/x-www-form-urlencoded" })
-);
-
+      navigator.sendBeacon(
+        formUrl,
+        new Blob([payload], { type: "application/x-www-form-urlencoded" })
+      );
 
       await generatePdf(sessions);
     } catch (e){
