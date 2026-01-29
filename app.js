@@ -340,7 +340,7 @@ async function init(){
         return;
       }
       showWarnings(msgs);
-         // ===== Usage log to Google Form =====
+         // ===== Usage log to Google Form (reliable) =====
 const name = el("studentName").value?.trim() || "İsim girilmedi";
 
 let modeText = "Bilinmiyor";
@@ -349,21 +349,16 @@ if (mode === "y1") modeText = "1. Sınıf";
 if (mode === "y2") modeText = "2. Sınıf";
 if (mode === "mix") modeText = "1+2 (Karışık)";
 
-try {
-  await fetch("https://docs.google.com/forms/d/e/1tID-TvJhubKJMz-8SkgUhADqOZ6yKeldWSLLDrHmCY/formResponse", {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      "entry.1401981382": name,
-      "entry.1538779879": modeText
-    })
-  });
+const url = "https://docs.google.com/forms/d/e/1tID-TvJhubKJMz-8SkgUhADqOZ6yKeldWSLLDrHmCY/formResponse";
+const payload = new URLSearchParams({
+  "entry.1401981382": name,
+  "entry.1538779879": modeText
+}).toString();
 
-  // give the browser a tiny moment
-  await new Promise(r => setTimeout(r, 150));
-} catch (err) {
-  console.log("Form log failed:", err);
+try {
+  navigator.sendBeacon(url, new Blob([payload], { type: "application/x-www-form-urlencoded" }));
+} catch (e) {
+  console.log("sendBeacon failed:", e);
 }
 
       await generatePdf(sessions);
