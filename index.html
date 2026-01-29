@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Karatay • Bilgisayar Programcılığı Ders Programı (PDF)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <h1>Karatay • Bilgisayar Programcılığı Ders Programı Oluşturucu</h1>
+    <p class="sub">Derslerini seç, (varsa) grup değiştir, çakışma kontrolü yap, PDF indir.</p>
+
+    <section class="card">
+      <div class="row row-top">
+        <div class="box">
+          <div class="lbl">Seçim Modu</div>
+          <div class="seg">
+            <label><input type="radio" name="mode" value="y1" checked> 1. Sınıf</label>
+            <label><input type="radio" name="mode" value="y2"> 2. Sınıf</label>
+            <label><input type="radio" name="mode" value="mix"> 1+2 (Karışık)</label>
+          </div>
+          <div class="hint">Karışık: 1. ve 2. sınıf derslerini birlikte seçebilirsin.</div>
+        </div>
+
+        <div class="box">
+          <label class="lbl" for="studentName">Ad Soyad (isteğe bağlı)</label>
+          <input id="studentName" placeholder="Örn: Mahmoud Karzoun" />
+          <div class="hint">PDF üstüne yazılır.</div>
+        </div>
+      </div>
+
+      <h2>Ders Seçimi</h2>
+      <div id="courseList" class="list"></div>
+
+      <div class="row">
+        <button id="btnPreview">Programı Göster</button>
+        <button id="btnPdf" class="primary">PDF İndir</button>
+      </div>
+
+      <div id="warnings" class="warn"></div>
+    </section>
+
+    <section class="card">
+      <h2>Haftalık Program (Önizleme)</h2>
+      <div id="preview"></div>
+    </section>
+
+    <footer class="foot">
+      Sadece KTO Karatay Üniversitesi • Bilgisayar Programcılığı (1–2) için.
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

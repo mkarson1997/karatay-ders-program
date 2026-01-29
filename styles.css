@@ -1,0 +1,45 @@
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --border:#e6e6e6;
+  --text:#111;
+  --muted:#555;
+  --brand:#0B3954;
+  --warn:#b00020;
+}
+
+body{font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); margin:0; color:var(--text);}
+.wrap{max-width: 1100px; margin: 24px auto; padding: 0 16px;}
+h1{margin:0 0 6px;}
+.sub{margin:0 0 18px; color:var(--muted);}
+
+.card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px; box-shadow: 0 1px 8px rgba(0,0,0,.03);}
+h2{margin: 10px 0 10px;}
+
+.row{display:flex; gap:16px; margin-top:12px; flex-wrap:wrap; align-items:flex-start;}
+.row-top{margin-top:0;}
+.box{flex: 1 1 320px;}
+.lbl{display:block; font-size:12px; color:var(--muted); margin-bottom:8px;}
+.hint{font-size:12px; color:var(--muted); margin-top:6px;}
+.seg{display:flex; gap:12px; flex-wrap:wrap; padding:10px; border:1px solid #ddd; border-radius:12px; background:#fff;}
+.seg label{display:flex; gap:6px; align-items:center; cursor:pointer;}
+
+select,input{padding:10px 10px; border-radius:10px; border:1px solid #ddd; background:#fff; width: 100%; max-width: 420px;}
+
+.list{display:grid; grid-template-columns: 1fr; gap:10px; margin-top:10px;}
+.item{display:flex; justify-content:space-between; align-items:center; padding:10px; border:1px solid #eee; border-radius:12px;}
+.item strong{display:block;}
+.item small{color:var(--muted);}
+.item-right{display:flex; gap:10px; align-items:center;}
+.item-right select{min-width:140px; width:auto;}
+
+button{padding:10px 12px; border-radius:10px; border:1px solid #ddd; background:#fff; cursor:pointer;}
+button.primary{background:var(--brand); color:#fff; border-color:var(--brand);}
+.warn{margin-top:10px; color:var(--warn); white-space:pre-line;}
+
+table{width:100%; border-collapse: collapse; overflow:hidden; border-radius:12px;}
+td,th{border:1px solid #ddd; padding:8px; text-align:center;}
+th{background:var(--brand); color:white;}
+tbody tr:nth-child(odd){background:#F7FBFC;}
+tbody tr:nth-child(even){background:#E8F1F2;}
+.foot{font-size:12px; color:var(--muted); padding: 8px 2px;}
