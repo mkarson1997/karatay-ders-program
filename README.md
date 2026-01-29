@@ -14,3 +14,5 @@ Bu site, **KTO Karatay Üniversitesi – Bilgisayar Programcılığı** öğrenc
 4) “PDF İndir”
 
 > Not: Bu proje sadece Bilgisayar Programcılığı içindir.
+
+https://mkarson1997.github.io/karatay-ders-program/
