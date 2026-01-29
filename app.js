@@ -300,13 +300,48 @@ async function generatePdf(sessions){
 
     // wrap course, max 2 lines
     const courseFontSize = 10;
-    let lines = wrapText(font, r[1], courseFontSize, courseW);
-    if (lines.length > 2) {
-      lines = [lines[0], ellipsize(font, lines.slice(1).join(" "), courseFontSize, courseW)];
-    }
+    // wrap course, max 3 lines
+const courseFontSize = 10;
+let lines = wrapText(font, r[1], courseFontSize, courseW);
 
-    // dynamic row height
-    const rowH = (lines.length === 1) ? 22 : 34;
+// إذا طلع أكثر من 3 أسطر، قصّ وخلي آخر سطر فيه ...
+if (lines.length > 3) {
+  const first = lines[0];
+  const second = lines[1];
+  const rest = lines.slice(2).join(" ");
+  const third = ellipsize(font, rest, courseFontSize, courseW);
+  lines = [first, second, third];
+}
+
+// dynamic row height حسب عدد الأسطر (كل سطر زيادة +12px)
+const rowH = 22 + (lines.length - 1) * 12;
+
+// baseline من فوق لتحت (حتى ما يطلع السطر الثاني مقصوص)
+const topTextY = y + rowH - 16;
+
+// Gün
+page.drawText(r[0], { x: colX[0]+6, y: topTextY, size: 10, font, color: rgb(0,0,0) });
+
+// Ders (wrapped lines)
+lines.forEach((ln, i) => {
+  page.drawText(ln, {
+    x: colX[1]+6,
+    y: topTextY - (i * 12),
+    size: courseFontSize,
+    font,
+    color: rgb(0,0,0)
+  });
+});
+
+// Saat
+page.drawText(r[2], { x: colX[2]+6, y: topTextY, size: 10, font, color: rgb(0,0,0) });
+
+// Sınıf
+page.drawText(r[3], { x: colX[3]+6, y: topTextY, size: 10, font, color: rgb(0,0,0) });
+
+// بعد ما تخلص الصف
+y -= rowH;
+
 
     const bg = idx%2===0 ? rgb(0.97,0.99,1) : rgb(0.92,0.96,0.99);
     page.drawRectangle({ x: x0, y, width: tableW, height: rowH, color: bg });
