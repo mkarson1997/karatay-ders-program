@@ -340,7 +340,7 @@ async function init(){
         return;
       }
       showWarnings(msgs);
-         // ===== Usage log to Google Form (reliable) =====
+         // ===== Usage log (Google Form) =====
 const name = el("studentName").value?.trim() || "İsim girilmedi";
 
 let modeText = "Bilinmiyor";
@@ -349,17 +349,18 @@ if (mode === "y1") modeText = "1. Sınıf";
 if (mode === "y2") modeText = "2. Sınıf";
 if (mode === "mix") modeText = "1+2 (Karışık)";
 
-const url = "https://docs.google.com/forms/d/e/1tID-TvJhubKJMz-8SkgUhADqOZ6yKeldWSLLDrHmCY/formResponse";
+const url = "https://docs.google.com/forms/d/e/1FAIpQLSczOEqI2XQU5HnlF4AOeH9ZcMyzlJ3NugWpuG0Pr5A8FXRVDQ/formResponse";
+
 const payload = new URLSearchParams({
   "entry.1401981382": name,
   "entry.1538779879": modeText
 }).toString();
 
-try {
-  navigator.sendBeacon(url, new Blob([payload], { type: "application/x-www-form-urlencoded" }));
-} catch (e) {
-  console.log("sendBeacon failed:", e);
-}
+navigator.sendBeacon(
+  url,
+  new Blob([payload], { type: "application/x-www-form-urlencoded" })
+);
+
 
       await generatePdf(sessions);
     } catch (e){
