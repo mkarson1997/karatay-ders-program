@@ -61,3 +61,68 @@ tbody tr:nth-child(even){background:#E8F1F2;}
 #preview table {
   min-width: 760px; /* خلي الجدول عريض وثابت */
 }
+
+/* ===============================
+   Mobile table optimization
+   =============================== */
+@media (max-width: 600px) {
+
+  /* خلي الجدول ياخد العرض بدون ما يكبر */
+  #preview {
+    overflow-x: auto;
+  }
+
+  #preview table {
+    width: 100%;
+    table-layout: fixed; /* أهم سطر */
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  /* تحكم بعرض الأعمدة */
+  #preview th:nth-child(1),
+  #preview td:nth-child(1) {
+    width: 18%; /* Gün */
+  }
+
+  #preview th:nth-child(2),
+  #preview td:nth-child(2) {
+    width: 34%; /* Ders */
+  }
+
+  #preview th:nth-child(3),
+  #preview td:nth-child(3) {
+    width: 18%; /* Saat */
+  }
+
+  #preview th:nth-child(4),
+  #preview td:nth-child(4) {
+    width: 15%; /* Sınıf */
+  }
+
+  #preview th:nth-child(5),
+  #preview td:nth-child(5) {
+    width: 15%; /* Hoca */
+  }
+
+  /* إخفاء Kaynak على الموبايل */
+  #preview th:nth-child(6),
+  #preview td:nth-child(6) {
+    display: none;
+  }
+
+  /* كسر النص الطويل بدل ما يوسع الجدول */
+  #preview td,
+  #preview th {
+    word-wrap: break-word;
+    white-space: normal;
+    padding: 6px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  /* خلي اسم الدرس أوضح */
+  #preview td:nth-child(2) {
+    font-weight: 600;
+  }
+}
