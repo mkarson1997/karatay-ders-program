@@ -1,0 +1,347 @@
+{
+  "school": "KTO Karatay Üniversitesi",
+  "term": "2025–2026 Bahar",
+  "timeSlots": [
+    {
+      "slot": 1,
+      "start": "08:30",
+      "end": "09:15"
+    },
+    {
+      "slot": 2,
+      "start": "09:20",
+      "end": "10:05"
+    },
+    {
+      "slot": 3,
+      "start": "10:10",
+      "end": "10:55"
+    },
+    {
+      "slot": 4,
+      "start": "11:00",
+      "end": "11:45"
+    },
+    {
+      "slot": 5,
+      "start": "11:50",
+      "end": "12:35"
+    },
+    {
+      "slot": 6,
+      "start": "12:40",
+      "end": "13:25"
+    },
+    {
+      "slot": 7,
+      "start": "14:00",
+      "end": "14:45"
+    },
+    {
+      "slot": 8,
+      "start": "14:55",
+      "end": "15:40"
+    },
+    {
+      "slot": 9,
+      "start": "15:50",
+      "end": "16:35"
+    },
+    {
+      "slot": 10,
+      "start": "16:45",
+      "end": "17:30"
+    },
+    {
+      "slot": 11,
+      "start": "17:40",
+      "end": "18:25"
+    },
+    {
+      "slot": 12,
+      "start": "18:35",
+      "end": "19:20"
+    },
+    {
+      "slot": 13,
+      "start": "19:30",
+      "end": "20:15"
+    }
+  ],
+  "programs": [
+    {
+      "id": "bp1",
+      "name": "Bilgisayar Programcılığı 1",
+      "courses": [
+        {
+          "key": "prog2",
+          "name": "Programlama Temelleri 2",
+          "sessions": [
+            {
+              "group": 1,
+              "day": "Salı",
+              "start": "08:30",
+              "end": "12:35",
+              "room": "M-306",
+              "teacher": "Uğur POLAT"
+            },
+            {
+              "group": 2,
+              "day": "Pazartesi",
+              "start": "14:00",
+              "end": "17:30",
+              "room": "M-306",
+              "teacher": "Uğur POLAT"
+            }
+          ]
+        },
+        {
+          "key": "db",
+          "name": "Veritabanı Yönetimi",
+          "sessions": [
+            {
+              "group": 1,
+              "day": "Salı",
+              "start": "12:40",
+              "end": "17:30",
+              "room": "M-306",
+              "teacher": "Seda YILDIRIM"
+            },
+            {
+              "group": 2,
+              "day": "Cuma",
+              "start": "08:30",
+              "end": "12:35",
+              "room": "M-302",
+              "teacher": "Seda YILDIRIM"
+            }
+          ]
+        },
+        {
+          "key": "web",
+          "name": "Web Programlama",
+          "sessions": [
+            {
+              "group": 1,
+              "day": "Perşembe",
+              "start": "14:00",
+              "end": "18:25",
+              "room": "M-301",
+              "teacher": "Abubakar MAYANJA"
+            },
+            {
+              "group": 2,
+              "day": "Cuma",
+              "start": "14:00",
+              "end": "18:25",
+              "room": "M-301",
+              "teacher": "Abubakar MAYANJA"
+            }
+          ]
+        },
+        {
+          "key": "os",
+          "name": "İşletim Sistemleri",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Çarşamba",
+              "start": "14:55",
+              "end": "16:35",
+              "room": "M-301",
+              "teacher": "Gizem ÇELİK"
+            }
+          ]
+        },
+        {
+          "key": "math2",
+          "name": "Matematik II",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Çarşamba",
+              "start": "11:00",
+              "end": "13:25",
+              "room": "C-Z21",
+              "teacher": "Mehmet Fedai KAYA"
+            }
+          ]
+        },
+        {
+          "key": "eng2",
+          "name": "Yabancı Dil (İngilizce) II",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Perşembe",
+              "start": "11:50",
+              "end": "13:25",
+              "room": "H-Z07",
+              "teacher": "İsmail PİŞER"
+            }
+          ]
+        },
+        {
+          "key": "stats",
+          "name": "Bilgisayarlı İstatistik",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Perşembe",
+              "start": "08:30",
+              "end": "11:45",
+              "room": "M-306",
+              "teacher": "Fatma ÇİFTCİ"
+            }
+          ]
+        },
+        {
+          "key": "dd",
+          "name": "Dijital Dönüşüm (1)",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Çarşamba",
+              "start": "09:20",
+              "end": "10:55",
+              "room": "C-214",
+              "teacher": "Merve AKIN"
+            }
+          ]
+        },
+        {
+          "key": "entre",
+          "name": "Girişimcilik ve İnovasyon (2)",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Çarşamba",
+              "start": "09:20",
+              "end": "10:55",
+              "room": "C-Z21",
+              "teacher": "Yasemin SAVAŞ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bp2",
+      "name": "Bilgisayar Programcılığı 2",
+      "courses": [
+        {
+          "key": "ai",
+          "name": "Yapay Zekâ ve Uygulamaları / Yapay Zekaya Giriş",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Salı",
+              "start": "14:00",
+              "end": "17:30",
+              "room": "M-302",
+              "teacher": "Ayşe Merve BÜYÜKBAŞ"
+            }
+          ]
+        },
+        {
+          "key": "cloud",
+          "name": "Bulut Bilişim / Bulut Bilişim",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Pazartesi",
+              "start": "14:00",
+              "end": "17:30",
+              "room": "M-302",
+              "teacher": "Ayşe Merve BÜYÜKBAŞ"
+            }
+          ]
+        },
+        {
+          "key": "vp2",
+          "name": "Görsel Programlama-2",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Pazartesi",
+              "start": "09:20",
+              "end": "11:45",
+              "room": "M-306",
+              "teacher": "Abubakar MAYANJA"
+            }
+          ]
+        },
+        {
+          "key": "cap",
+          "name": "Bilişimde Güncel Teknolojiler",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Perşembe",
+              "start": "08:30",
+              "end": "10:55",
+              "room": "C-217",
+              "teacher": "Uğur POLAT"
+            }
+          ]
+        },
+        {
+          "key": "emb",
+          "name": "Gömülü Sistemler",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Çarşamba",
+              "start": "14:55",
+              "end": "17:30",
+              "room": "C-B16",
+              "teacher": "Uğur POLAT"
+            }
+          ]
+        },
+        {
+          "key": "internsec",
+          "name": "İnternet Güvenliği",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Cuma",
+              "start": "09:20",
+              "end": "11:45",
+              "room": "M-304",
+              "teacher": "Gizem ÇELİK"
+            }
+          ]
+        },
+        {
+          "key": "profeng",
+          "name": "Mesleki İngilizce",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Perşembe",
+              "start": "14:00",
+              "end": "15:40",
+              "room": "C-Z14",
+              "teacher": "Mehmet Utku ÇAKIR"
+            }
+          ]
+        },
+        {
+          "key": "grad",
+          "name": "Bitirme Projesi",
+          "sessions": [
+            {
+              "group": 0,
+              "day": "Çarşamba",
+              "start": "11:50",
+              "end": "13:25",
+              "room": "M-301",
+              "teacher": "Seda YILDIRIM / Uğur POLAT / Abubakar MAYANJA"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
