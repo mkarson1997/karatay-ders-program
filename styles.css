@@ -43,3 +43,11 @@ th{background:var(--brand); color:white;}
 tbody tr:nth-child(odd){background:#F7FBFC;}
 tbody tr:nth-child(even){background:#E8F1F2;}
 .foot{font-size:12px; color:var(--muted); padding: 8px 2px;}
+
+/* Mobile: hide only "Kaynak" column */
+@media (max-width: 600px) {
+  #preview th:nth-child(6),
+  #preview td:nth-child(6) {
+    display: none;
+  }
+}
