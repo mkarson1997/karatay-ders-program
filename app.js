@@ -366,8 +366,6 @@ try {
   console.log("Form log failed:", err);
 }
 
-alert("Log sent (attempt). Check Google Sheet.");
-
       await generatePdf(sessions);
     } catch (e){
       console.error(e);
