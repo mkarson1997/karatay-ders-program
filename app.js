@@ -216,33 +216,6 @@ function notesForDay(day, sessions){
   return "Orta yoğunluk. Araları verimli kullan.";
 }
 
-function wrapText(font, text, fontSize, maxWidth) {
-  const words = String(text).split(/\s+/).filter(Boolean);
-  const lines = [];
-  let line = "";
-
-  for (const w of words) {
-    const test = line ? `${line} ${w}` : w;
-    const width = font.widthOfTextAtSize(test, fontSize);
-    if (width <= maxWidth) {
-      line = test;
-    } else {
-      if (line) lines.push(line);
-      line = w;
-    }
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-
-function ellipsize(font, text, fontSize, maxWidth) {
-  let t = String(text);
-  while (t.length > 0 && font.widthOfTextAtSize(t + "…", fontSize) > maxWidth) {
-    t = t.slice(0, -1);
-  }
-  return t.length ? (t + "…") : "";
-}
-
 async function generatePdf(sessions){
   const { PDFDocument, rgb } = PDFLib;
 
@@ -288,43 +261,14 @@ async function generatePdf(sessions){
   if (!rows.length) rows.push(["-", "Hiç ders seçilmedi", "-", "-"]);
 
   rows.forEach((r, idx) => {
-  // r = [day, course, time, room]
-  const bg = idx%2===0 ? rgb(0.97,0.99,1) : rgb(0.92,0.96,0.99);
-
-  // widths
-  const dayW   = (colX[1] - colX[0]) - 12;
-  const courseW= (colX[2] - colX[1]) - 12; // عمود الدرس
-  const timeW  = (colX[3] - colX[2]) - 12;
-  const roomW  = (40 + (595.28-80) - colX[3]) - 12;
-
-  // wrap course (max 2 lines)
-  const courseFontSize = 10;
-  let lines = wrapText(font, r[1], courseFontSize, courseW);
-  if (lines.length > 2) {
-    lines = [lines[0], ellipsize(font, lines.slice(1).join(" "), courseFontSize, courseW)];
-  }
-
-  // dynamic row height: 1 line => 22, 2 lines => 34
-  const thisRowH = (lines.length === 1) ? 22 : 34;
-
-  page.drawRectangle({ x: x0, y, width: tableW, height: thisRowH, color: bg });
-
-  // day
-  page.drawText(r[0], { x: colX[0]+6, y: y + thisRowH - 16, size: 10, font, color: rgb(0,0,0) });
-
-  // course lines (draw from top)
-  const startY = y + thisRowH - 16;
-  lines.forEach((ln, i) => {
-    page.drawText(ln, { x: colX[1]+6, y: startY - (i*12), size: courseFontSize, font, color: rgb(0,0,0) });
+    const bg = idx%2===0 ? rgb(0.97,0.99,1) : rgb(0.92,0.96,0.99);
+    page.drawRectangle({ x: x0, y, width: tableW, height: rowH, color: bg });
+    page.drawText(r[0], { x: colX[0]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
+    page.drawText(r[1], { x: colX[1]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
+    page.drawText(r[2], { x: colX[2]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
+    page.drawText(r[3], { x: colX[3]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
+    y -= rowH;
   });
-
-  // time + room
-  page.drawText(r[2], { x: colX[2]+6, y: y + thisRowH - 16, size: 10, font, color: rgb(0,0,0) });
-  page.drawText(r[3], { x: colX[3]+6, y: y + thisRowH - 16, size: 10, font, color: rgb(0,0,0) });
-
-  y -= thisRowH;
-});
-
 
   y -= 10;
   page.drawText("Notlar:", { x: 40, y, size: 12, font, color: rgb(0.04,0.22,0.33) });
