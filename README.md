@@ -1,5 +1,7 @@
 # Karatay Course Schedule Builder
 
+[![Tests](https://github.com/mkarson1997/karatay-ders-program/actions/workflows/tests.yml/badge.svg)](https://github.com/mkarson1997/karatay-ders-program/actions/workflows/tests.yml)
+
 A browser-based course scheduling tool that helps Computer Programming students build a valid timetable, detect collisions, switch groups when possible, and export the final schedule as PDF.
 
 **Live demo:** https://mkarson1997.github.io/karatay-ders-program/
@@ -22,34 +24,36 @@ Instead of acting as a static timetable page, the application lets a user choose
 - Runs entirely in the browser
 - Static deployment with GitHub Pages
 - No student-name or schedule telemetry in the portfolio version
+- Dependency-free automated tests for the pure conflict core
 
 ## Engineering focus
 
-This repository demonstrates front-end business logic rather than only visual styling.
-
-The important part of the application is the scheduling flow:
+The scheduling code is intentionally split between pure rules and browser/UI concerns.
 
 ```text
-Course selection
+Course selection / DOM
       │
       ▼
-Read candidate sessions
+selectedSessions()
       │
       ▼
-Check time-slot conflicts
+scheduler-core.js
       │
-      ├── no conflict ──► add to schedule
+      ├── time parsing
+      ├── overlap rule
+      └── conflict detection
       │
+      ▼
+tryAutoResolve()
+      │
+      ├── no conflict ──► render / PDF
       └── conflict
               │
               ▼
       try alternative group
-              │
-              ├── valid ──► add alternative
-              └── invalid ─► report collision
 ```
 
-The current implementation keeps the main scheduling rules in browser JavaScript. A tracked engineering issue covers extracting the pure scheduling rules into reusable automated tests.
+`scheduler-core.js` is shared by the browser application and Node tests, so the tests exercise the same time/conflict implementation used by the deployed page rather than a duplicated test-only copy.
 
 ## Tech stack
 
@@ -57,8 +61,29 @@ The current implementation keeps the main scheduling rules in browser JavaScript
 - CSS3
 - JavaScript
 - JSON course data
+- Node.js built-in test runner
+- GitHub Actions
 - Client-side PDF generation/export workflow
 - GitHub Pages
+
+## Automated tests
+
+Run locally:
+
+```bash
+npm test
+```
+
+The current dependency-free suite covers:
+
+- `HH:MM` → minute conversion,
+- actual overlapping sessions,
+- touching boundaries as non-conflicting,
+- online sessions as non-time conflicts,
+- sessions on different days,
+- conflict-pair/day output.
+
+The same command runs in `.github/workflows/tests.yml` on pushes and pull requests to `main`.
 
 ## Usage
 
@@ -77,22 +102,26 @@ The optional student-name field is used only to label the locally generated PDF.
 
 See [PRIVACY.md](PRIVACY.md) for the data-handling policy and [SECURITY.md](SECURITY.md) for vulnerability reporting.
 
+## Open source
+
+Project-authored source is licensed under the [MIT License](LICENSE). Third-party font/library licensing boundaries are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ## Portfolio value
 
 The project is intentionally small but useful. It demonstrates:
 
 - translating a real scheduling problem into browser logic,
+- extracting pure logic from DOM concerns,
+- automated testing and CI,
 - conflict detection and conditional decision-making,
 - state-driven UI updates,
 - privacy review and removal of unnecessary telemetry,
 - exporting user-generated results,
-- shipping a zero-backend application to a public URL,
-- maintaining contribution, security and pull-request documentation.
+- shipping a zero-backend application to a public URL.
 
 ## Roadmap
 
-- Add a reusable automated test suite for collision and group-selection rules
-- Extract pure scheduling logic from DOM concerns where useful
+- Add tests for automatic group-resolution behavior
 - Add semester/version selection
 - Add shareable schedule URLs without leaking personal data
 - Improve accessibility and keyboard navigation
