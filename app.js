@@ -341,27 +341,7 @@ async function init(){
       }
       showWarnings(msgs);
 
-      // ===== Usage log (Google Form) =====
-      const name = el("studentName").value?.trim() || "İsim girilmedi";
-
-      let modeText = "Bilinmiyor";
-      const mode = getMode();
-      if (mode === "y1") modeText = "1. Sınıf";
-      if (mode === "y2") modeText = "2. Sınıf";
-      if (mode === "mix") modeText = "1+2 (Karışık)";
-
-      const url = "https://docs.google.com/forms/d/e/1FAIpQLSczOEqI2XQU5HnlF4AOeH9ZcMyzlJ3NugWpuG0Pr5A8FXRVDQ/formResponse";
-
-      const payload = new URLSearchParams({
-        "entry.1401981382": name,
-        "entry.1538779879": modeText
-      }).toString();
-
-      navigator.sendBeacon(
-        url,
-        new Blob([payload], { type: "application/x-www-form-urlencoded" })
-      );
-
+      // Student name is used only to render the local PDF. No telemetry is sent.
       await generatePdf(sessions);
     } catch (e){
       console.error(e);
