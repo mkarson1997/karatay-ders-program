@@ -1,4 +1,5 @@
 const DAYS_ORDER = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi/Pazar"];
+const { timeToMin, detectConflicts } = ScheduleCore;
 
 let DATA = null;
 
@@ -11,18 +12,6 @@ function el(id){return document.getElementById(id);}
 
 function getMode(){
   return document.querySelector('input[name="mode"]:checked')?.value || "y1";
-}
-
-function timeToMin(t){
-  if (!t || t === "Online") return null;
-  const [h,m] = t.split(":").map(Number);
-  return h*60 + m;
-}
-function overlap(a,b){
-  const aS=timeToMin(a.start), aE=timeToMin(a.end);
-  const bS=timeToMin(b.start), bE=timeToMin(b.end);
-  if (aS===null || bS===null) return false;
-  return Math.max(aS,bS) < Math.min(aE,bE);
 }
 
 function getProgramsByMode(){
@@ -109,27 +98,6 @@ function selectedSessions(){
     }
   }
   return out;
-}
-
-function detectConflicts(sessions){
-  const byDay = {};
-  sessions.forEach(s => {
-    byDay[s.day] ??= [];
-    byDay[s.day].push(s);
-  });
-
-  const conflicts = [];
-  for (const day of Object.keys(byDay)){
-    const items = byDay[day].filter(x => x.start !== "Online");
-    for (let i=0;i<items.length;i++){
-      for (let j=i+1;j<items.length;j++){
-        if (overlap(items[i], items[j])){
-          conflicts.push({day, a: items[i], b: items[j]});
-        }
-      }
-    }
-  }
-  return conflicts;
 }
 
 function getCourseDef(programId, courseKey){
