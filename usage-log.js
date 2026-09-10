@@ -2,6 +2,7 @@
   const FORM_ENDPOINT = "https://docs.google.com/forms/d/e/1FAIpQLSczOEqI2XQU5HnlF4AOeH9ZcMyzlJ3NugWpuG0Pr5A8FXRVDQ/formResponse";
   const NAME_ENTRY = "entry.1401981382";
   const MODE_ENTRY = "entry.1538779879";
+  const ANONYMOUS_LABEL = "Anonim kullanım";
 
   function modeLabel() {
     const mode = document.querySelector('input[name="mode"]:checked')?.value;
@@ -11,9 +12,9 @@
     return "Bilinmiyor";
   }
 
-  function submitUsage(name, mode) {
+  function submitUsage(mode) {
     const payload = new URLSearchParams({
-      [NAME_ENTRY]: name || "İsim girilmedi",
+      [NAME_ENTRY]: ANONYMOUS_LABEL,
       [MODE_ENTRY]: mode,
     }).toString();
 
@@ -36,48 +37,41 @@
     }).catch((error) => console.debug("Usage log failed:", error));
   }
 
-  function addConsentControl(nameInput) {
-    const existing = document.getElementById("usageConsent");
-    if (existing) return existing;
+  function normalizeUiCopy() {
+    document.getElementById("usageConsent")?.closest(".usage-consent")?.remove();
 
-    const label = document.createElement("label");
-    label.className = "usage-consent";
-    label.innerHTML = `
-      <input id="usageConsent" type="checkbox" />
-      <span>
-        <strong>Kullanım istatistiğine katkı sağla</strong>
-        <small>Seçersen adın ve sınıf seçimin Google Form üzerinden kullanım tablosuna eklenir. Ders seçimlerin gönderilmez.</small>
-      </span>
-    `;
+    const nameInput = document.getElementById("studentName");
+    const helper = nameInput
+      ?.closest(".control-panel")
+      ?.querySelector(".control-head small");
 
-    nameInput.closest(".name-field-wrap")?.insertAdjacentElement("afterend", label);
-    return label.querySelector("input");
+    if (helper) {
+      helper.textContent = "İsteğe bağlı. Yalnızca oluşturduğun PDF üzerinde görünür.";
+    }
   }
 
   function wire() {
     const button = document.getElementById("btnPdf");
-    const nameInput = document.getElementById("studentName");
     const warnings = document.getElementById("warnings");
-    if (!button || !nameInput || typeof button.onclick !== "function") {
+
+    normalizeUiCopy();
+
+    if (!button || typeof button.onclick !== "function") {
       setTimeout(wire, 100);
       return;
     }
 
-    const consent = addConsentControl(nameInput);
     const originalHandler = button.onclick;
 
     button.onclick = async function wrappedPdfHandler(event) {
-      const shouldLog = Boolean(consent?.checked);
-      const name = nameInput.value?.trim() || "İsim girilmedi";
       const mode = modeLabel();
 
       await originalHandler.call(this, event);
 
-      if (!shouldLog) return;
       const status = warnings?.textContent || "";
       if (/PDF üretilmedi|PDF indirilemedi/i.test(status)) return;
 
-      submitUsage(name, mode);
+      submitUsage(mode);
     };
   }
 
