@@ -316,7 +316,6 @@ async function generatePdf(sessions) {
   const modeTitle = mode === "y1" ? "1. Sınıf" : mode === "y2" ? "2. Sınıf" : "1+2 Karışık";
   const student = el("studentName").value?.trim();
   const summary = pdfSummary(sessions);
-  const sourcePages = Array.isArray(DATA.source?.pages) ? DATA.source.pages.join("-") : "1-2";
 
   page.drawRectangle({ x: 0, y: 0, width, height, color: C.paper });
 
@@ -358,7 +357,7 @@ async function generatePdf(sessions) {
     x: 45, y: stripY + 9, size: 8.8, font: bold, color: C.ink,
   });
 
-  const sourceText = `Resmî çizelge ${DATA.source?.generatedAt || "-"}  •  Kaynak PDF s. ${sourcePages}`;
+  const sourceText = `Resmî çizelge ${DATA.source?.generatedAt || "-"}`;
   const sourceWidth = regular.widthOfTextAtSize(sourceText, 7.7);
   page.drawText(sourceText, {
     x: width - 45 - sourceWidth, y: stripY + 9.2, size: 7.7, font: regular, color: C.muted,
