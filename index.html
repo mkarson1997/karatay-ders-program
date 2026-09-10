@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Karatay • Bilgisayar Programcılığı Ders Programı (PDF)</title>
+  <meta name="description" content="KTO Karatay Üniversitesi Bilgisayar Programcılığı 2026-2027 Güz Dönemi ders programı oluşturucu." />
+  <title>Karatay • 2026-2027 Güz • Bilgisayar Programcılığı Ders Programı</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="wrap">
     <h1>Karatay • Bilgisayar Programcılığı Ders Programı Oluşturucu</h1>
     <p class="sub">Derslerini seç, (varsa) grup değiştir, çakışma kontrolü yap, PDF indir.</p>
+    <p id="datasetMeta" class="dataset-meta" aria-live="polite">2026-2027 Güz Dönemi verisi yükleniyor…</p>
 
     <section class="card">
       <div class="row row-top">
@@ -26,7 +28,7 @@
         <div class="box">
           <label class="lbl" for="studentName">Ad Soyad (isteğe bağlı)</label>
           <input id="studentName" placeholder="Örn: Mahmoud Karzoun" />
-          <div class="hint">PDF üstüne yazılır.</div>
+          <div class="hint">Yalnızca cihazında oluşturulan PDF üstüne yazılır.</div>
         </div>
       </div>
 
@@ -38,7 +40,7 @@
         <button id="btnPdf" class="primary">PDF İndir</button>
       </div>
 
-      <div id="warnings" class="warn"></div>
+      <div id="warnings" class="warn" aria-live="polite"></div>
     </section>
 
     <section class="card">
@@ -47,7 +49,7 @@
     </section>
 
     <footer class="foot">
-      Sadece KTO Karatay Üniversitesi • Bilgisayar Programcılığı (1–2) için.
+      KTO Karatay Üniversitesi • Bilgisayar Programcılığı • 2026-2027 Güz Dönemi • Kaynak: resmî çizelgenin 1-2. sayfaları.
     </footer>
   </main>
 
