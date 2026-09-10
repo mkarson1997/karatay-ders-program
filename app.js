@@ -316,7 +316,6 @@ async function generatePdf(sessions) {
   const modeTitle = mode === "y1" ? "1. Sınıf" : mode === "y2" ? "2. Sınıf" : "1+2 Karışık";
   const student = el("studentName").value?.trim();
   const summary = pdfSummary(sessions);
-  const sourcePages = Array.isArray(DATA.source?.pages) ? DATA.source.pages.join("-") : "1-2";
 
   page.drawRectangle({ x: 0, y: 0, width, height, color: C.paper });
 
@@ -358,7 +357,7 @@ async function generatePdf(sessions) {
     x: 45, y: stripY + 9, size: 8.8, font: bold, color: C.ink,
   });
 
-  const sourceText = `Resmî çizelge ${DATA.source?.generatedAt || "-"}  •  Kaynak PDF s. ${sourcePages}`;
+  const sourceText = `Resmî çizelge ${DATA.source?.generatedAt || "-"}`;
   const sourceWidth = regular.widthOfTextAtSize(sourceText, 7.7);
   page.drawText(sourceText, {
     x: width - 45 - sourceWidth, y: stripY + 9.2, size: 7.7, font: regular, color: C.muted,
@@ -369,7 +368,7 @@ async function generatePdf(sessions) {
   const statW = (width - 68 - statGap * 3) / 4;
   const statData = [
     ["SEÇİLİ DERS", String(summary.courses)],
-    ["TOPLAM HDS", String(summary.hds)],
+    ["SINIF", modeTitle],
     ["AKTİF GÜN", `${summary.activeDays}/5`],
     ["GÜN ARALIĞI", `${summary.first} - ${summary.last}`],
   ];
@@ -486,7 +485,7 @@ async function generatePdf(sessions) {
         });
       }
 
-      const codeLabel = `${session.code || "-"}  •  ${session.hds || "-"} HDS`;
+      const codeLabel = `${session.code || "-"}`;
       page.drawText(truncatePdfText(regular, codeLabel, innerW, codeSize), {
         x: innerX, y: cardY + (compact ? 8.5 : 24), size: codeSize, font: regular, color: C.muted,
       });
