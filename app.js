@@ -368,7 +368,7 @@ async function generatePdf(sessions) {
   const statW = (width - 68 - statGap * 3) / 4;
   const statData = [
     ["SEÇİLİ DERS", String(summary.courses)],
-    ["TOPLAM HDS", String(summary.hds)],
+    ["SINIF", modeTitle],
     ["AKTİF GÜN", `${summary.activeDays}/5`],
     ["GÜN ARALIĞI", `${summary.first} - ${summary.last}`],
   ];
@@ -485,7 +485,7 @@ async function generatePdf(sessions) {
         });
       }
 
-      const codeLabel = `${session.code || "-"}  •  ${session.hds || "-"} HDS`;
+      const codeLabel = `${session.code || "-"}`;
       page.drawText(truncatePdfText(regular, codeLabel, innerW, codeSize), {
         x: innerX, y: cardY + (compact ? 8.5 : 24), size: codeSize, font: regular, color: C.muted,
       });
