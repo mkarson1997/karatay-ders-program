@@ -1,10 +1,11 @@
-const DAYS_ORDER = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi/Pazar"];
+const DAYS_ORDER = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma"];
 const { timeToMin, detectConflicts } = ScheduleCore;
 
 let DATA = null;
 
 async function loadData(){
   const res = await fetch("data/courses.json");
+  if (!res.ok) throw new Error(`Ders verisi yüklenemedi (${res.status})`);
   DATA = await res.json();
 }
 
@@ -20,7 +21,17 @@ function getProgramsByMode(){
   const p2 = DATA.programs.find(p => p.id === "bp2");
   if (m === "y1") return [p1].filter(Boolean);
   if (m === "y2") return [p2].filter(Boolean);
-  return [p1,p2].filter(Boolean);
+  return [p1, p2].filter(Boolean);
+}
+
+function renderDatasetMeta(){
+  const source = DATA.source || {};
+  const parts = [DATA.term];
+  if (source.generatedAt) parts.push(`Resmî çizelge: ${source.generatedAt}`);
+  if (Array.isArray(source.pages) && source.pages.length){
+    parts.push(`Kaynak: PDF sayfa ${source.pages.join("-")}`);
+  }
+  el("datasetMeta").textContent = parts.filter(Boolean).join(" • ");
 }
 
 function clearOutputs(){
@@ -40,8 +51,8 @@ function buildCourseList(){
 
   for (const prog of progs){
     const header = document.createElement("div");
-    header.style.marginTop = "6px";
-    header.innerHTML = `<strong style="display:block;padding:6px 2px;color:#0B3954">${prog.name}</strong>`;
+    header.className = "program-title";
+    header.innerHTML = `<strong>${prog.name}</strong><small>${prog.totalHours ?? "-"} HDS • Kaynak sayfa ${prog.sourcePage ?? "-"}</small>`;
     list.appendChild(header);
 
     prog.courses.forEach(c => {
@@ -53,7 +64,8 @@ function buildCourseList(){
       div.className = "item";
 
       const left = document.createElement("div");
-      left.innerHTML = `<strong>${c.name}</strong><small>${hasGroups ? "Grup seç (varsa)" : "Tek seçenek"}</small>`;
+      const meta = [c.code, c.hds ? `${c.hds} HDS` : null, hasGroups ? "Grup seç" : "Tek seçenek"].filter(Boolean).join(" • ");
+      left.innerHTML = `<strong>${c.name}</strong><small>${meta}</small>`;
 
       const right = document.createElement("div");
       right.className = "item-right";
@@ -61,10 +73,12 @@ function buildCourseList(){
       const chk = document.createElement("input");
       chk.type = "checkbox";
       chk.id = `chk_${id}`;
+      chk.setAttribute("aria-label", `${c.name} dersini seç`);
 
       const sel = document.createElement("select");
       sel.id = `grp_${id}`;
       sel.disabled = !hasGroups;
+      sel.setAttribute("aria-label", `${c.name} grup seçimi`);
       sel.innerHTML = hasGroups
         ? groups.map(g => `<option value="${g}">Grup ${g}</option>`).join("")
         : `<option value="0">Tek</option>`;
@@ -91,10 +105,18 @@ function selectedSessions(){
 
       const sel = document.getElementById(`grp_${id}`);
       const grp = Number(sel?.value ?? 0);
-
-      const sessions = c.sessions.filter(s => s.group === grp || (!sel.disabled && s.group===grp));
+      const sessions = c.sessions.filter(s => s.group === grp);
       const use = sessions.length ? sessions : c.sessions;
-      use.forEach(s => out.push({program: prog.name, programId: prog.id, courseKey: c.key, course: c.name, ...s}));
+
+      use.forEach(s => out.push({
+        program: prog.name,
+        programId: prog.id,
+        courseKey: c.key,
+        course: s.group ? `${c.name} (${s.group})` : c.name,
+        code: c.code || "",
+        hds: c.hds || "",
+        ...s
+      }));
     }
   }
   return out;
@@ -134,14 +156,14 @@ function tryAutoResolve(){
         const testConf = detectConflicts(testSessions);
 
         if (testConf.length < conflicts.length){
-          changes.push(`Otomatik grup değişti: ${item.course} → Grup ${alt}`);
+          changes.push(`Otomatik grup değişti: ${cdef.name} → Grup ${alt}`);
           sessions = testSessions;
           conflicts = testConf;
           changedThisPass = true;
           break;
-        } else {
-          sel.value = String(current);
         }
+
+        sel.value = String(current);
       }
       if (changedThisPass) break;
     }
@@ -159,7 +181,16 @@ function renderPreview(sessions){
   for (const day of DAYS_ORDER){
     const dayItems = sessions.filter(s => s.day === day);
     dayItems.sort((a,b)=>(timeToMin(a.start)??99999)-(timeToMin(b.start)??99999));
-    dayItems.forEach(s => rows.push([day, s.course, `${s.start} – ${s.end}`, s.room || "-", s.teacher || "-", s.program]));
+    dayItems.forEach(s => rows.push([
+      day,
+      s.code || "-",
+      s.course,
+      s.hds || "-",
+      `${s.start} - ${s.end}`,
+      s.room || "-",
+      s.teacher || "-",
+      s.program
+    ]));
   }
 
   if (!rows.length){
@@ -167,9 +198,9 @@ function renderPreview(sessions){
     return;
   }
 
-  let html = `<table><thead><tr><th>Gün</th><th>Ders</th><th>Saat</th><th>Sınıf</th><th>Hoca</th><th>Kaynak</th></tr></thead><tbody>`;
+  let html = `<table><thead><tr><th>Gün</th><th>Kod</th><th>Ders</th><th>HDS</th><th>Saat</th><th>Sınıf</th><th>Hoca</th><th>Kaynak</th></tr></thead><tbody>`;
   for (const r of rows){
-    html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`;
+    html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td></tr>`;
   }
   html += `</tbody></table>`;
   preview.innerHTML = html;
@@ -184,67 +215,87 @@ function notesForDay(day, sessions){
   return "Orta yoğunluk. Araları verimli kullan.";
 }
 
+function fitTextSize(font, text, maxWidth, preferred=8.5, min=5.5){
+  let size = preferred;
+  while (size > min && font.widthOfTextAtSize(String(text), size) > maxWidth){
+    size -= 0.25;
+  }
+  return size;
+}
+
 async function generatePdf(sessions){
   const { PDFDocument, rgb } = PDFLib;
-
   const fontBytes = await fetch("assets/DejaVuSans.ttf").then(r => r.arrayBuffer());
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
   const font = await pdfDoc.embedFont(fontBytes, { subset: true });
 
-  const page = pdfDoc.addPage([595.28, 841.89]);
+  const page = pdfDoc.addPage([841.89, 595.28]);
   const { width, height } = page.getSize();
 
   const mode = getMode();
   const modeTitle = (mode==="y1") ? "1. Sınıf" : (mode==="y2" ? "2. Sınıf" : "1+2 (Karışık)");
   const student = el("studentName").value?.trim();
 
-  const title = `Haftalık Ders Programı – Bilgisayar Programcılığı (${modeTitle})`;
-  page.drawText(title, { x: 40, y: height-60, size: 16, font, color: rgb(0.04,0.22,0.33) });
-  page.drawText(`${DATA.term} • KTO Karatay Üniversitesi`, { x: 40, y: height-80, size: 11, font, color: rgb(0.4,0.4,0.4) });
+  const title = `Haftalık Ders Programı - Bilgisayar Programcılığı (${modeTitle})`;
+  page.drawText(title, { x: 30, y: height-42, size: 15, font, color: rgb(0.04,0.22,0.33) });
+  page.drawText(`${DATA.term} • ${DATA.school}`, { x: 30, y: height-60, size: 10, font, color: rgb(0.38,0.38,0.38) });
+  const source = DATA.source?.generatedAt ? `Resmî çizelge: ${DATA.source.generatedAt} • Kaynak PDF: sayfa 1-2` : "";
+  if (source) page.drawText(source, { x: 30, y: height-75, size: 8.5, font, color: rgb(0.45,0.45,0.45) });
   if (student){
-    page.drawText(`Öğrenci: ${student}`, { x: 40, y: height-98, size: 11, font, color: rgb(0.2,0.2,0.2) });
+    page.drawText(`Öğrenci: ${student}`, { x: 30, y: height-91, size: 9.5, font, color: rgb(0.2,0.2,0.2) });
   }
 
-  let y = height - 130;
-  const rowH = 22;
-  const x0 = 40;
-  const tableW = width - 80;
-  const colX = [x0, x0+110, x0+340, x0+455];
+  let y = height - (student ? 122 : 106);
+  const rowH = 20;
+  const x0 = 30;
+  const widths = [65, 110, 205, 42, 92, 65, 202];
+  const headers = ["Gün", "Kod", "Ders", "HDS", "Saat", "Sınıf", "Hoca"];
+  const colX = [x0];
+  for (let i=0; i<widths.length-1; i++) colX.push(colX[i] + widths[i]);
+  const tableW = widths.reduce((a,b)=>a+b,0);
 
   page.drawRectangle({ x: x0, y, width: tableW, height: rowH, color: rgb(0.04,0.22,0.33) });
-  page.drawText("Gün", { x: colX[0]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
-  page.drawText("Ders", { x: colX[1]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
-  page.drawText("Saat", { x: colX[2]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
-  page.drawText("Sınıf", { x: colX[3]+6, y: y+6, size: 11, font, color: rgb(1,1,1) });
+  headers.forEach((h, i) => {
+    page.drawText(h, { x: colX[i]+4, y: y+6, size: 8.5, font, color: rgb(1,1,1) });
+  });
   y -= rowH;
 
   const rows = [];
   for (const day of DAYS_ORDER){
     const dayItems = sessions.filter(s => s.day===day);
     dayItems.sort((a,b)=>(timeToMin(a.start)??99999)-(timeToMin(b.start)??99999));
-    dayItems.forEach(s => rows.push([day, s.course, `${s.start} – ${s.end}`, s.room || "-"]));
+    dayItems.forEach(s => rows.push([
+      day,
+      s.code || "-",
+      s.course,
+      String(s.hds || "-"),
+      `${s.start} - ${s.end}`,
+      s.room || "-",
+      s.teacher || "-"
+    ]));
   }
-  if (!rows.length) rows.push(["-", "Hiç ders seçilmedi", "-", "-"]);
+  if (!rows.length) rows.push(["-", "-", "Hiç ders seçilmedi", "-", "-", "-", "-"]);
 
   rows.forEach((r, idx) => {
     const bg = idx%2===0 ? rgb(0.97,0.99,1) : rgb(0.92,0.96,0.99);
     page.drawRectangle({ x: x0, y, width: tableW, height: rowH, color: bg });
-    page.drawText(r[0], { x: colX[0]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
-    page.drawText(r[1], { x: colX[1]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
-    page.drawText(r[2], { x: colX[2]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
-    page.drawText(r[3], { x: colX[3]+6, y: y+6, size: 10, font, color: rgb(0,0,0) });
+    r.forEach((text, i) => {
+      const value = String(text);
+      const size = fitTextSize(font, value, widths[i]-8, i===6 ? 7.5 : 8.2, 5.2);
+      page.drawText(value, { x: colX[i]+4, y: y+6, size, font, color: rgb(0,0,0) });
+    });
     y -= rowH;
   });
 
-  y -= 10;
-  page.drawText("Notlar:", { x: 40, y, size: 12, font, color: rgb(0.04,0.22,0.33) });
-  y -= 18;
+  y -= 8;
+  page.drawText("Notlar:", { x: 30, y, size: 10.5, font, color: rgb(0.04,0.22,0.33) });
+  y -= 15;
   for (const day of DAYS_ORDER){
-    page.drawText(`${day}: ${notesForDay(day, sessions)}`, { x: 40, y, size: 10, font, color: rgb(0,0,0) });
-    y -= 14;
-    if (y < 60) break;
+    page.drawText(`${day}: ${notesForDay(day, sessions)}`, { x: 30, y, size: 8.2, font, color: rgb(0,0,0) });
+    y -= 12;
+    if (y < 25) break;
   }
 
   const pdfBytes = await pdfDoc.save();
@@ -253,7 +304,7 @@ async function generatePdf(sessions){
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = "ders_programi.pdf";
+  a.download = "karatay_2026_2027_guz_ders_programi.pdf";
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -271,10 +322,18 @@ function wireMode(){
 }
 
 async function init(){
-  await loadData();
-  wireMode();
-  buildCourseList();
-  clearOutputs();
+  try{
+    await loadData();
+    renderDatasetMeta();
+    wireMode();
+    buildCourseList();
+    clearOutputs();
+  } catch (e){
+    console.error(e);
+    el("datasetMeta").textContent = "Ders verisi yüklenemedi.";
+    showWarnings(["❌ Ders verisi yüklenemedi.", e?.message || String(e)]);
+    return;
+  }
 
   el("btnPreview").onclick = () => {
     const {sessions, conflicts, changes} = tryAutoResolve();
@@ -321,4 +380,5 @@ async function init(){
     }
   };
 }
+
 init();
