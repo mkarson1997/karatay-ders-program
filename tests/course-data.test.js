@@ -19,11 +19,17 @@ function officialHours(program){
   }, 0);
 }
 
-test('dataset metadata matches 2026-2027 fall source pages', () => {
+test('dataset metadata matches 2026-2027 fall source pages and later update', () => {
   assert.equal(data.term, '2026-2027 Güz Dönemi');
   assert.deepEqual(data.source.pages, [1, 2]);
-  assert.equal(data.source.generatedAt, '04.09.2026');
+  assert.equal(data.source.generatedAt, '04.09.2026 + güncel duyuru');
   assert.ok(Array.isArray(data.source.updates));
+  assert.ok(data.source.updates.length > 0);
+  assert.ok(
+    data.source.updates.some(update =>
+      update.includes('Bilişim Hukuku') && update.includes('Python Programlama')
+    )
+  );
   assert.equal(data.timeSlots.length, 13);
   assert.deepEqual(data.timeSlots[0], { slot: 1, start: '08:30', end: '09:15' });
   assert.deepEqual(data.timeSlots[12], { slot: 13, start: '19:30', end: '20:15' });
