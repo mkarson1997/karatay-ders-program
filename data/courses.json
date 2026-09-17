@@ -5,7 +5,10 @@
     "document": "aSc Haftalık Ders Programı 09_09_2026.pdf",
     "generatedAt": "04.09.2026",
     "pages": [1, 2],
-    "scope": "Bilgisayar Programcılığı"
+    "scope": "Bilgisayar Programcılığı",
+    "updates": [
+      "Bilişim Hukuku ve Python Programlama derslerinin saat ve derslikleri sonradan yapılan duyuruya göre güncellenmiştir."
+    ]
   },
   "timeSlots": [
     { "slot": 1, "start": "08:30", "end": "09:15" },
@@ -152,14 +155,14 @@
         {
           "key": "python",
           "code": "03830104",
-          "name": "Phyton Programlama",
+          "name": "Python Programlama",
           "hds": 3,
           "sessions": [
             {
               "group": 0,
               "day": "Çarşamba",
-              "start": "09:20",
-              "end": "11:45",
+              "start": "11:00",
+              "end": "13:25",
               "room": "M-301",
               "teacher": "Öğr. Gör. Abubakar MAYANJA"
             }
@@ -174,9 +177,9 @@
             {
               "group": 0,
               "day": "Çarşamba",
-              "start": "15:50",
-              "end": "18:25",
-              "room": "C-121",
+              "start": "08:30",
+              "end": "10:55",
+              "room": "CZ-19",
               "teacher": "Öğr. Gör. Gizem ÇELİK"
             }
           ]
