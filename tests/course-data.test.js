@@ -19,10 +19,17 @@ function officialHours(program){
   }, 0);
 }
 
-test('dataset metadata matches 2026-2027 fall source pages', () => {
+test('dataset metadata matches 2026-2027 fall source pages and later update', () => {
   assert.equal(data.term, '2026-2027 Güz Dönemi');
   assert.deepEqual(data.source.pages, [1, 2]);
-  assert.equal(data.source.generatedAt, '04.09.2026');
+  assert.equal(data.source.generatedAt, '04.09.2026 + güncel duyuru');
+  assert.ok(Array.isArray(data.source.updates));
+  assert.ok(data.source.updates.length > 0);
+  assert.ok(
+    data.source.updates.some(update =>
+      update.includes('Bilişim Hukuku') && update.includes('Python Programlama')
+    )
+  );
   assert.equal(data.timeSlots.length, 13);
   assert.deepEqual(data.timeSlots[0], { slot: 1, start: '08:30', end: '09:15' });
   assert.deepEqual(data.timeSlots[12], { slot: 13, start: '19:30', end: '20:15' });
@@ -58,7 +65,7 @@ test('every course and session has complete official schedule metadata', () => {
   }
 });
 
-test('key source sessions match the official first two pages', () => {
+test('key schedule sessions include the later Wednesday adjustment', () => {
   const bp1 = data.programs.find(p => p.id === 'bp1');
   const bp2 = data.programs.find(p => p.id === 'bp2');
 
@@ -83,7 +90,14 @@ test('key source sessions match the official first two pages', () => {
   const law = bp2.courses.find(c => c.key === 'law');
   assert.deepEqual(
     [law.sessions[0].day, law.sessions[0].start, law.sessions[0].end, law.sessions[0].room],
-    ['Çarşamba', '15:50', '18:25', 'C-121']
+    ['Çarşamba', '08:30', '10:55', 'CZ-19']
+  );
+
+  const python = bp2.courses.find(c => c.key === 'python');
+  assert.equal(python.name, 'Python Programlama');
+  assert.deepEqual(
+    [python.sessions[0].day, python.sessions[0].start, python.sessions[0].end, python.sessions[0].room],
+    ['Çarşamba', '11:00', '13:25', 'M-301']
   );
 
   const ai = bp2.courses.find(c => c.key === 'ai');

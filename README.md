@@ -10,6 +10,13 @@ A browser-based course scheduling tool for KTO Karatay University Computer Progr
 
 The repository is updated for **2026-2027 Güz Dönemi** using the official weekly schedule for **Bilgisayar Programcılığı-1** and **Bilgisayar Programcılığı-2** from pages **1-2** of the supplied aSc timetable PDF. The official timetable itself states that it was generated on **04.09.2026**.
 
+A later department announcement is also applied to the current dataset for the Wednesday second-year schedule:
+
+- **Bilişim Hukuku:** Çarşamba **08:30-10:55**, **CZ-19**
+- **Python Programlama:** Çarşamba **11:00-13:25**, **M-301**
+
+Both courses remain on Wednesday; their lesson times/classrooms were updated by the later announcement, which also corrected the course label from `Phyton Programlama` to `Python Programlama`.
+
 The dataset includes:
 
 - official course codes and names,
@@ -20,21 +27,19 @@ The dataset includes:
 - first-year group 1/group 2 alternatives,
 - the official timetable totals: 28 HDS for Bilgisayar Programcılığı-1 and 34 HDS for Bilgisayar Programcılığı-2.
 
-> Note: the source document spells `Phyton Programlama` exactly that way, so the dataset preserves the official source wording rather than silently correcting it.
-
 ## Core features
 
 - First-year, second-year and mixed-course modes
 - Interactive course selection
 - Structured and source-traceable course data in `data/courses.json`
-- Course code and HDS display
+- Course code metadata
 - Time-slot collision detection
 - Automatic group adjustment when an alternative group can resolve a conflict
-- Weekly timetable preview with code, HDS, room and instructor
+- Weekly timetable preview with room and instructor details
 - Landscape PDF export with full schedule details
 - Runs entirely in the browser
 - Static deployment with GitHub Pages
-- No student-name or schedule telemetry
+- Anonymous planner-mode usage counting through the project's Google Form/Sheets flow
 - Dependency-free automated tests for scheduling rules and current dataset integrity
 
 ## Engineering focus
@@ -96,7 +101,8 @@ The suite covers:
 - current semester metadata,
 - expected program totals,
 - valid official time-slot boundaries,
-- required course code/HDS/session metadata.
+- required course code/HDS/session metadata,
+- the later Bilişim Hukuku / Python Programlama Wednesday adjustment.
 
 The same command runs in `.github/workflows/tests.yml` on pushes and pull requests to `main`.
 
@@ -114,7 +120,7 @@ The same command runs in `.github/workflows/tests.yml` on pushes and pull reques
 
 The schedule builder does not need a backend account or user database. Course selections, conflict detection and PDF generation are handled in the browser.
 
-The optional student-name field is used only to label the locally generated PDF. No student name or selected schedule is sent to a form or analytics endpoint.
+The optional student-name field is used only to label the locally generated PDF and is not submitted to the usage statistics flow. After a successful PDF generation, the application records only an anonymous marker and the selected planner mode through the project's Google Form/Sheets flow. Selected courses, rooms, teachers, timetable contents and the generated PDF are not submitted.
 
 See [PRIVACY.md](PRIVACY.md) for the data-handling policy and [SECURITY.md](SECURITY.md) for vulnerability reporting.
 
