@@ -15,7 +15,7 @@ A later department announcement is also applied to the current dataset for the W
 - **Bilişim Hukuku:** Çarşamba **08:30-10:55**, **CZ-19**
 - **Python Programlama:** Çarşamba **11:00-13:25**, **M-301**
 
-Both courses remain on Wednesday; only their lesson times/classrooms were updated by the later announcement. The later announcement also uses the spelling `Python Programlama`, which is now reflected in the dataset.
+Both courses remain on Wednesday; their lesson times/classrooms were updated by the later announcement, which also corrected the course label from `Phyton Programlama` to `Python Programlama`.
 
 The dataset includes:
 
